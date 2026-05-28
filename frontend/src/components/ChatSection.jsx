@@ -43,7 +43,7 @@ function ChatSection({ uploaded }) {
       setLoading(true);
 
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/chat`,
+        "http://localhost:5000/api/chat",
         {
           question: finalQuestion
         }

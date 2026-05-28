@@ -27,7 +27,7 @@ function App() {
 
         {file ? (
 
-          <PDFViewer file={file} />
+          <PDFViewer fileUrl={file} />
 
         ) : (
 

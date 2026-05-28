@@ -1,28 +1,67 @@
-import { Document, Page, pdfjs } from "react-pdf";
+import { useEffect, useState } from "react";
 
-import { useState } from "react";
+import {
+  Document,
+  Page,
+  pdfjs
+} from "react-pdf";
 
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+
 import "react-pdf/dist/esm/Page/TextLayer.css";
 
 pdfjs.GlobalWorkerOptions.workerSrc =
-  `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`;
+  `//unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`;
 
-function PDFViewer({ file }) {
+function PDFViewer({ fileUrl }) {
 
-  const [numPages, setNumPages] = useState(null);
+  const [numPages, setNumPages] =
+    useState(null);
 
-  function onDocumentLoadSuccess({ numPages }) {
+  const [pageWidth, setPageWidth] =
+    useState(600);
+
+  useEffect(() => {
+
+    function updateWidth() {
+
+      const width =
+        window.innerWidth * 0.38;
+
+      setPageWidth(
+        Math.min(width, 800)
+      );
+    }
+
+    updateWidth();
+
+    window.addEventListener(
+      "resize",
+      updateWidth
+    );
+
+    return () =>
+      window.removeEventListener(
+        "resize",
+        updateWidth
+      );
+
+  }, []);
+
+  function onDocumentLoadSuccess({
+    numPages
+  }) {
+
     setNumPages(numPages);
   }
 
-  if (!file) {
+  if (!fileUrl) {
 
     return (
 
-      <div className="h-full flex items-center justify-center text-gray-500">
+      <div className="h-full flex items-center justify-center text-gray-500 text-xl">
 
-        Upload a PDF to preview
+        PDF preview will appear here
 
       </div>
     );
@@ -30,33 +69,29 @@ function PDFViewer({ file }) {
 
   return (
 
-    <div className="h-full overflow-y-auto p-6">
+    <div className="overflow-auto h-full w-full p-4 flex flex-col items-center">
 
       <Document
-        file={file}
+        file={fileUrl}
         onLoadSuccess={onDocumentLoadSuccess}
-        renderTextLayer={false}
-        renderAnnotationLayer={false}
-        loading={
-          <div className="text-gray-400">
-            Loading PDF...
-          </div>
-        }
+        loading="Loading PDF..."
       >
 
-        {
+        {numPages &&
           Array.from(
             new Array(numPages),
-            (_, index) => (
+            (el, index) => (
 
               <div
-                key={index}
-                className="mb-8 flex justify-center"
+                key={`page_${index + 1}`}
+                className="mb-6"
               >
 
                 <Page
                   pageNumber={index + 1}
-                  width={550}
+                  width={pageWidth}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
                 />
 
               </div>

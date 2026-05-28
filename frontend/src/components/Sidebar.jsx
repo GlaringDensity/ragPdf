@@ -29,7 +29,7 @@ function Sidebar({
       formData.append("pdf", file);
 
       await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/upload`,
+        "http://localhost:5000/api/upload",
         formData
       );
 
