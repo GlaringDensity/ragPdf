@@ -2,6 +2,20 @@
 
 # PDF AI Assistant (RAG-based PDF Chat Application)
 
+
+---
+
+# 🎥 Demo Video
+
+## Compressed Preview Video
+[https://github.com/user-attachments/assets/YOUR-UPLOADED-ASSET-ID](https://github.com/user-attachments/assets/a47d23e4-66ea-4f08-be74-1a0c24bb5278)
+
+## High Quality Full Demo
+https://drive.google.com/file/d/10EY62SVitzXroulcqetwSNfudxiOVF4I/view?usp=drive_link
+
+---
+
+
 ## Overview
 
 PDF AI Assistant is a Retrieval-Augmented Generation (RAG) web application that allows users to upload PDF documents and interact with them using natural language.
@@ -82,17 +96,7 @@ The retrieved context is sent to the LLM to generate answers.
 
 
 
----
 
-# 🎥 Demo Video
-
-## Compressed Preview Video
-[https://github.com/user-attachments/assets/YOUR-UPLOADED-ASSET-ID](https://github.com/user-attachments/assets/a47d23e4-66ea-4f08-be74-1a0c24bb5278)
-
-## High Quality Full Demo
-https://drive.google.com/file/d/10EY62SVitzXroulcqetwSNfudxiOVF4I/view?usp=drive_link
-
----
 
 
 
