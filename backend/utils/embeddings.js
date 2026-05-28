@@ -2,7 +2,6 @@ const axios = require('axios');
 
 let vectorStore = [];
 
-// Generate embeddings
 async function generateEmbedding(text) {
 
   const response = await axios.post(
@@ -25,10 +24,8 @@ async function generateEmbedding(text) {
   return response.data.data[0].embedding;
 }
 
-// Store embeddings
 async function storeEmbeddings(chunks, filename) {
 
-  // Clear old embeddings
   vectorStore = [];
 
   for (let i = 0; i < chunks.length; i++) {
