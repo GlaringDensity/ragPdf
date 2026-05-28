@@ -2,7 +2,7 @@ const axios = require('axios');
 
 let vectorStore = [];
 
-// Generate embeddings using OpenRouter
+// Generate embeddings
 async function generateEmbedding(text) {
 
   const response = await axios.post(
@@ -27,6 +27,9 @@ async function generateEmbedding(text) {
 
 // Store embeddings
 async function storeEmbeddings(chunks, filename) {
+
+  // Clear old embeddings
+  vectorStore = [];
 
   for (let i = 0; i < chunks.length; i++) {
 
@@ -86,6 +89,7 @@ async function findSimilarChunks(query, topK = 4) {
 }
 
 module.exports = {
+  generateEmbedding,
   storeEmbeddings,
   findSimilarChunks
 };

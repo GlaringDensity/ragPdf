@@ -2,7 +2,9 @@ const express = require('express');
 
 const axios = require('axios');
 
-const { findSimilarChunks } = require('../utils/embeddings');
+const {
+  findSimilarChunks
+} = require('../utils/embeddings');
 
 const router = express.Router();
 
@@ -19,10 +21,25 @@ router.post('/', async (req, res) => {
       });
     }
 
+    // Dynamic retrieval depth
+    let topK = 6;
+
+    if (
+      question.toLowerCase().includes("summary") ||
+      question.toLowerCase().includes("overview") ||
+      question.toLowerCase().includes("explain this pdf") ||
+      question.toLowerCase().includes("summarize") ||
+      question.toLowerCase().includes("explain the pdf") ||
+      question.toLowerCase().includes("describe this pdf")
+    ) {
+
+      topK = 12;
+    }
+
     // Semantic retrieval
     const similarChunks = await findSimilarChunks(
       question,
-      4
+      topK
     );
 
     if (similarChunks.length === 0) {
@@ -33,10 +50,15 @@ router.post('/', async (req, res) => {
       });
     }
 
+    // Remove duplicate chunks
+    const uniqueChunks = [
+      ...new Set(
+        similarChunks.map(c => c.chunk)
+      )
+    ];
+
     // Build context
-    const context = similarChunks
-      .map(c => c.chunk)
-      .join('\n\n');
+    const context = uniqueChunks.join('\n\n');
 
     // Source snippets
     const sources = similarChunks.map(c => ({
@@ -69,14 +91,34 @@ router.post('/', async (req, res) => {
 async function callLLM(context, question) {
 
   const prompt = `
-You are a PDF assistant.
+You are an intelligent PDF assistant.
 
-Answer ONLY from the provided context.
+You MUST answer ONLY using the provided context.
 
-If the answer is not available in the context, say:
+IMPORTANT RULES:
+
+1. If the user asks for:
+- summary
+- overview
+- explain this PDF
+- explain the document
+
+Then:
+- identify ALL major sections/topics
+- explain each section separately
+- do NOT skip sections
+- preserve titles and headings if available
+
+2. If the question is specific:
+answer ONLY from the relevant retrieved context.
+
+3. NEVER invent information.
+
+4. If information is missing, say:
 "I could not find this information in the uploaded PDF."
 
-Do not hallucinate.
+5. If multiple unrelated topics exist in the PDF,
+clearly separate them.
 
 Context:
 ${context}
@@ -101,13 +143,14 @@ Answer:
         }
       ],
 
-      temperature: 0.2,
+      temperature: 0.3,
 
-      max_tokens: 500
+      max_tokens: 700
     },
 
     {
       headers: {
+
         Authorization:
           `Bearer ${process.env.OPENROUTER_API_KEY}`,
 
